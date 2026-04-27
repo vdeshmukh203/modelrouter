@@ -5,8 +5,8 @@ abstract: "Route LLM requests to appropriate models based on configurable rules.
 authors:
   - family-names: "Deshmukh"
     given-names: "Vaibhav"
-version: "0.1.0"
-date-released: "2026-04-25"
+version: "0.2.0"
+date-released: "2026-04-27"
 license: MIT
 repository-code: "https://github.com/vdeshmukh203/modelrouter"
 keywords:
