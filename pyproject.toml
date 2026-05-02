@@ -4,11 +4,66 @@ build-backend = "hatchling.build"
 
 [project]
 name = "modelrouter"
-version = "0.1.0"
-description = "Route LLM requests to appropriate models based on configurable rules"
+version = "0.2.0"
+description = "Route LLM requests to appropriate models based on configurable, declarative rules"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.9"
+authors = [
+  {name = "Vaibhav Deshmukh"},
+]
+keywords = [
+  "llm", "routing", "large-language-models", "mlops",
+  "ai", "openai", "anthropic", "model-selection",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.4",
+  "pytest-cov>=4.1",
+  "ruff>=0.4",
+  "mypy>=1.8",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/modelrouter"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v"
+
+[tool.coverage.run]
+source = ["src/modelrouter"]
+omit = ["src/modelrouter/gui.py"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 90
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.9"
+strict = true
+ignore_missing_imports = true
+exclude = ["src/modelrouter/gui.py"]
