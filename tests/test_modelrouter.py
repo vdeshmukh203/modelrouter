@@ -1,11 +1,13 @@
 """Tests for modelrouter."""
-import pytest
-from modelrouter import Modelrouter, Route, RouteError
 
+import pytest
+
+from modelrouter import Modelrouter, RouteError
 
 # ---------------------------------------------------------------------------
 # Basic resolution
 # ---------------------------------------------------------------------------
+
 
 def test_default_model():
     r = Modelrouter(default="gpt-4o-mini")
@@ -41,6 +43,7 @@ def test_priority_ties_respect_insertion_order():
 # ---------------------------------------------------------------------------
 # Route management
 # ---------------------------------------------------------------------------
+
 
 def test_remove_route():
     r = Modelrouter(default="mini")
@@ -127,6 +130,7 @@ def test_update_route_invalid_condition_type():
 # Explain
 # ---------------------------------------------------------------------------
 
+
 def test_explain_matched_route():
     r = Modelrouter()
     r.add_route("code", "gpt-4o", lambda p: "code" in p, priority=5, tags=["prod"])
@@ -153,6 +157,7 @@ def test_explain_default_fallback():
 # Cost resolution
 # ---------------------------------------------------------------------------
 
+
 def test_resolve_with_cost_matched():
     r = Modelrouter(default="mini", default_cost_per_1k=0.001)
     r.add_route("expensive", "gpt-4o", lambda p: True, cost_per_1k=0.03)
@@ -171,6 +176,7 @@ def test_resolve_with_cost_default():
 # ---------------------------------------------------------------------------
 # Tag filtering
 # ---------------------------------------------------------------------------
+
 
 def test_routes_by_tag():
     r = Modelrouter()
@@ -192,6 +198,7 @@ def test_routes_by_tag_multiple_matches():
 # ---------------------------------------------------------------------------
 # Statistics
 # ---------------------------------------------------------------------------
+
 
 def test_statistics_increments_on_match():
     r = Modelrouter()
@@ -220,6 +227,7 @@ def test_statistics_not_incremented_for_default():
 # ---------------------------------------------------------------------------
 # Validation
 # ---------------------------------------------------------------------------
+
 
 def test_empty_route_name_raises():
     r = Modelrouter()
@@ -255,6 +263,7 @@ def test_negative_cost_raises():
 # Resilience
 # ---------------------------------------------------------------------------
 
+
 def test_bad_condition_skipped_falls_back_to_default():
     r = Modelrouter(default="mini")
     r.add_route("bad", "gpt-4o", lambda p: 1 / 0)
@@ -271,6 +280,7 @@ def test_bad_condition_skipped_next_route_evaluated():
 # ---------------------------------------------------------------------------
 # Edge cases
 # ---------------------------------------------------------------------------
+
 
 def test_empty_prompt():
     r = Modelrouter(default="mini")

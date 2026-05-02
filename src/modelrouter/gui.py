@@ -12,18 +12,19 @@ or programmatically::
     router = Modelrouter(default="gpt-4o-mini")
     launch(router)
 """
+
 import re
 import tkinter as tk
 from tkinter import messagebox, ttk
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable, Optional
 
-from .router import Modelrouter, Route, RouteError
+from .router import Modelrouter, RouteError
 
 # ---------------------------------------------------------------------------
 # Condition builder
 # ---------------------------------------------------------------------------
 
-_CONDITION_TYPES: List[Tuple[str, str]] = [
+_CONDITION_TYPES: list[tuple[str, str]] = [
     ("always", "Always match"),
     ("contains", "Contains text"),
     ("not_contains", "Does not contain text"),
@@ -71,14 +72,14 @@ def _build_condition(cond_type: str, param: str) -> Callable[[str], bool]:
     if cond_type == "length_gt":
         try:
             threshold = int(param)
-        except ValueError:
-            raise ValueError(f"Length threshold must be an integer, got {param!r}.")
+        except ValueError as err:
+            raise ValueError(f"Length threshold must be an integer, got {param!r}.") from err
         return lambda p: len(p) > threshold
     if cond_type == "length_lt":
         try:
             threshold = int(param)
-        except ValueError:
-            raise ValueError(f"Length threshold must be an integer, got {param!r}.")
+        except ValueError as err:
+            raise ValueError(f"Length threshold must be an integer, got {param!r}.") from err
         return lambda p: len(p) < threshold
     if cond_type == "regex":
         pattern = re.compile(param)
@@ -172,8 +173,8 @@ class RouterGUI:
         form.grid(row=3, column=0, sticky="ew", pady=(12, 0))
         form.columnconfigure(1, weight=1)
 
-        self._form_vars: Dict[str, tk.StringVar] = {}
-        simple_fields: List[Tuple[str, str, str]] = [
+        self._form_vars: dict[str, tk.StringVar] = {}
+        simple_fields: list[tuple[str, str, str]] = [
             ("Name", "name", ""),
             ("Model", "model", "gpt-4o-mini"),
             ("Priority (int ≥ 0)", "priority", "0"),
@@ -186,16 +187,12 @@ class RouterGUI:
             )
             var = tk.StringVar(value=default)
             self._form_vars[key] = var
-            ttk.Entry(form, textvariable=var).grid(
-                row=row_idx, column=1, sticky="ew", pady=3
-            )
+            ttk.Entry(form, textvariable=var).grid(row=row_idx, column=1, sticky="ew", pady=3)
 
         base = len(simple_fields)
 
         # Condition type
-        ttk.Label(form, text="Condition:").grid(
-            row=base, column=0, sticky="e", padx=(0, 6), pady=3
-        )
+        ttk.Label(form, text="Condition:").grid(row=base, column=0, sticky="e", padx=(0, 6), pady=3)
         self._cond_type_var = tk.StringVar(value=self._COND_LABELS[1])
         self._cond_combo = ttk.Combobox(
             form,
@@ -232,16 +229,14 @@ class RouterGUI:
         ttk.Button(btn_frame, text="Test Route", command=self._test_prompt).grid(
             row=0, column=0, padx=(0, 6)
         )
-        ttk.Button(btn_frame, text="Clear", command=self._clear_prompt).grid(
-            row=0, column=1
-        )
+        ttk.Button(btn_frame, text="Clear", command=self._clear_prompt).grid(row=0, column=1)
 
         # Decision panel
         decision_frame = ttk.LabelFrame(parent, text="Routing Decision", padding=10)
         decision_frame.grid(row=3, column=0, sticky="ew", pady=(0, 8))
         decision_frame.columnconfigure(1, weight=1)
 
-        self._result_vars: Dict[str, tk.StringVar] = {}
+        self._result_vars: dict[str, tk.StringVar] = {}
         result_rows = [
             ("Model", "model"),
             ("Reason / Route", "reason"),
@@ -266,8 +261,12 @@ class RouterGUI:
         stats_frame.columnconfigure(0, weight=1)
 
         self._stats_text = tk.Text(
-            stats_frame, height=5, state="disabled", wrap="word",
-            relief="flat", font=("Courier", 9),
+            stats_frame,
+            height=5,
+            state="disabled",
+            wrap="word",
+            relief="flat",
+            font=("Courier", 9),
         )
         self._stats_text.grid(row=0, column=0, sticky="ew")
 
@@ -327,8 +326,12 @@ class RouterGUI:
 
         try:
             self.router.add_route(
-                name, model, condition,
-                priority=priority, cost_per_1k=cost, tags=tags,
+                name,
+                model,
+                condition,
+                priority=priority,
+                cost_per_1k=cost,
+                tags=tags,
             )
         except (RouteError, ValueError, TypeError) as exc:
             messagebox.showerror("Route Error", str(exc))

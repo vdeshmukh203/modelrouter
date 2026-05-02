@@ -1,7 +1,8 @@
 """LLM request router with priority, explanation, and cost-awareness."""
+
 import logging
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +36,7 @@ class Route:
     condition: Callable[[str], bool]
     priority: int = 0
     cost_per_1k: float = 0.0
-    tags: List[str] = field(default_factory=list)
+    tags: list[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         if not self.name:
@@ -75,8 +76,8 @@ class Modelrouter:
     def __init__(self, default: str = "gpt-4o-mini", default_cost_per_1k: float = 0.0) -> None:
         self._default = default
         self._default_cost = default_cost_per_1k
-        self._routes: List[Route] = []
-        self._stats: Dict[str, int] = {}
+        self._routes: list[Route] = []
+        self._stats: dict[str, int] = {}
         logger.debug("Modelrouter initialised with default=%r", default)
 
     # ------------------------------------------------------------------
@@ -90,7 +91,7 @@ class Modelrouter:
         condition: Callable[[str], bool],
         priority: int = 0,
         cost_per_1k: float = 0.0,
-        tags: Optional[List[str]] = None,
+        tags: Optional[list[str]] = None,
     ) -> None:
         """Register a routing rule.
 
@@ -122,8 +123,7 @@ class Modelrouter:
         """
         if any(r.name == name for r in self._routes):
             raise RouteError(
-                f"Route {name!r} is already registered; "
-                "call update_route() to modify it."
+                f"Route {name!r} is already registered; call update_route() to modify it."
             )
         route = Route(
             name=name,
@@ -146,7 +146,7 @@ class Modelrouter:
         condition: Optional[Callable[[str], bool]] = None,
         priority: Optional[int] = None,
         cost_per_1k: Optional[float] = None,
-        tags: Optional[List[str]] = None,
+        tags: Optional[list[str]] = None,
     ) -> None:
         """Update one or more fields of an existing route in-place.
 
@@ -227,7 +227,7 @@ class Modelrouter:
         route = self._match(prompt)
         return route.model if route else self._default
 
-    def explain(self, prompt: str) -> Dict[str, Any]:
+    def explain(self, prompt: str) -> dict[str, Any]:
         """Explain the routing decision for *prompt*.
 
         Returns
@@ -255,7 +255,7 @@ class Modelrouter:
             "cost_per_1k": self._default_cost,
         }
 
-    def resolve_with_cost(self, prompt: str) -> Tuple[str, float]:
+    def resolve_with_cost(self, prompt: str) -> tuple[str, float]:
         """Return *(model, cost_per_1k)* for *prompt*.
 
         Returns
@@ -272,7 +272,7 @@ class Modelrouter:
     # Introspection
     # ------------------------------------------------------------------
 
-    def routes(self) -> List[Route]:
+    def routes(self) -> list[Route]:
         """Return all registered routes in descending priority order."""
         return list(self._routes)
 
@@ -283,11 +283,11 @@ class Modelrouter:
                 return route
         return None
 
-    def routes_by_tag(self, tag: str) -> List[Route]:
+    def routes_by_tag(self, tag: str) -> list[Route]:
         """Return routes whose tag list contains *tag*."""
         return [r for r in self._routes if tag in r.tags]
 
-    def statistics(self) -> Dict[str, int]:
+    def statistics(self) -> dict[str, int]:
         """Return a snapshot mapping route name → number of times matched."""
         return dict(self._stats)
 
