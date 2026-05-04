@@ -1,3 +1,4 @@
-from .router import Modelrouter
-__all__ = ["Modelrouter"]
-__version__ = "0.1.0"
+from .router import Modelrouter, Route
+
+__all__ = ["Modelrouter", "Route"]
+__version__ = "0.2.0"
