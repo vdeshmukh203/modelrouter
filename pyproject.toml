@@ -4,11 +4,20 @@ build-backend = "hatchling.build"
 
 [project]
 name = "modelrouter"
-version = "0.1.0"
+version = "0.2.0"
 description = "Route LLM requests to appropriate models based on configurable rules"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.9"
 
+[project.optional-dependencies]
+gui = []   # tkinter ships with CPython; no extra packages needed
+
+[project.scripts]
+modelrouter-gui = "modelrouter.gui:main"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/modelrouter"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
